@@ -1,93 +1,85 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
-import data from '../data/mockData';
+import { View, Text, Image, ScrollView, StyleSheet } from 'react-native';
 
-export default function DetailsScreen({ route }) {
-    const params = route?.params ?? {};
-    const idRaw = params?.id ?? null;
-    const id = idRaw != null ? parseInt(String(idRaw), 10) : null;
-
-    let item = params?.item ?? null;
-    if (!item && id != null) {
-        item = data.find((d) => d.id === id) ?? null;
-    }
-    const image = item?.image;
-    const title = item?.title ?? 'Titre non renseigné';
-    const location = item?.location ?? item?.city ?? 'Ville inconnue';
-    const price = item?.price;
-
+export default function Details({ item }) {
+  if (!item) {
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {image ? (
-                <Image source={{ uri: image }} style={styles.image} />
-            ) : (
-                <View style={[styles.image, styles.placeholder]}></View>
-            )}
-
-            <View style={styles.card}>
-                <Text style={styles.title}>{title}</Text>
-
-                <View style={styles.metaRow}>
-                    <Text style={styles.location}>{location}</Text>
-                    <Text style={styles.price}>
-                        {price != null ? `Prix : ${price} €` : 'Prix non renseigné'}
-                    </Text>
-                </View>
-            </View>
-        </ScrollView>
+      <View style={styles.empty}>
+        <Text style={styles.emptyText}>Aucune donnée.</Text>
+      </View>
     );
+  }
+
+  const formatPrice = (p) => {
+    if (p == null || p === '') return '—';
+    return typeof p === 'number' ? `${p} €` : String(p);
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      {item.image ? (
+        <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+      ) : null}
+
+      <Text style={styles.title}>{item.title ?? `Item ${item.id ?? ''}`}</Text>
+
+      <View style={styles.info}>
+        <View style={styles.row}>
+          <Text style={styles.key}>Ville</Text>
+          <Text style={styles.value}>{item.city ?? '—'}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Text style={styles.key}>Prix</Text>
+          <Text style={styles.value}>{formatPrice(item.price)}</Text>
+        </View>
+      </View>
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        paddingTop: 40,
-        padding: 16,
-        backgroundColor: '#FFFFFF',
-        alignItems: 'center',
-    },
-    image: {
-        width: '100%',
-        height: 220,
-        borderRadius: 12,
-        marginBottom: 16,
-        resizeMode: 'cover',
-    },
-    placeholder: {
-        backgroundColor: '#FFFFFF',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    placeholderText: {
-        color: '#7d8794',
-    },
-    card: {
-        width: '100%',
-        backgroundColor: '#FFFFFF',
-        padding: 16,
-        borderRadius: 12,
-        shadowColor: '#000',
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 3,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: '700',
-        marginBottom: 12,
-        color: '#000000',
-    },
-    metaRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    price: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#059669',
-    },
-    location: {
-        fontSize: 14,
-        color: '#6b7280',
-    },
+  container: {
+    padding: 16,
+    alignItems: 'stretch',
+  },
+  image: {
+    width: '100%',
+    height: 180,
+    borderRadius: 8,
+    marginBottom: 12,
+    backgroundColor: '#eee',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 10,
+    textAlign: 'left',
+  },
+  info: {
+    width: '100%',
+  },
+  row: {
+    paddingVertical: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#ddd',
+  },
+  key: {
+    fontSize: 12,
+    color: '#666',
+  },
+  value: {
+    marginTop: 4,
+    fontSize: 16,
+    color: '#111',
+  },
+  empty: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+  },
+  emptyText: {
+    color: '#999',
+  },
 });
