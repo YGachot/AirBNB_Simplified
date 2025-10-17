@@ -28,19 +28,14 @@ export default function LocationScreen() {
   useEffect(() => {
     (async () => {
       try {
-        console.log('Demande de permission de localisation...');
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
           setErrorMsg('Permission d\'accès à la localisation refusée');
           return;
         }
-        
-        console.log('Permission accordée, récupération de la position...');
         let loc = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.High,
         });
-        
-        console.log('Position obtenue:', loc.coords);
         setLocation(loc);
         
         const dist = getDistanceFromLatLonInKm(
@@ -51,7 +46,6 @@ export default function LocationScreen() {
         );
         setDistance(dist);
       } catch (error) {
-        console.error('Erreur:', error);
         setErrorMsg('Erreur lors de la récupération de la position: ' + error.message);
       }
     })();

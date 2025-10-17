@@ -14,6 +14,15 @@ export default function Layout() {
                 }}
             />
             <Tabs.Screen
+                name="review"
+                options={{
+                    title: 'Reviews',
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="chatbubbles" color={color} size={size} />
+                    )
+                }}
+            />
+            <Tabs.Screen
                 name="profile"
                 options={{
                     title: 'Profile',
